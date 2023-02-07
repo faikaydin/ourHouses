@@ -87,19 +87,19 @@ const Dashboard = () => {
   });
   console.log(weeklySpend_1);
   weeklySpend_1.forEach((element) => {
-    weeklySpend_1_val += +element.transaction_amount;
+    weeklySpend_1_val += Math.round(+element.transaction_amount);
   });
 
   weeklySpend_2.forEach((element) => {
-    weeklySpend_2_val += +element.transaction_amount;
+    weeklySpend_2_val += Math.round(+element.transaction_amount);
   });
 
   weeklySpend_3.forEach((element) => {
-    weeklySpend_3_val += +element.transaction_amount;
+    weeklySpend_3_val += Math.round(+element.transaction_amount);
   });
 
   eatout.forEach((element) => {
-    eatout_val += +element.transaction_amount;
+    eatout_val += Math.round(+element.transaction_amount);
   });
 
   useEffect(() => {
