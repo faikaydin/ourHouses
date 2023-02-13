@@ -5,7 +5,7 @@ import PetsIcon from "@mui/icons-material/Pets";
 import RealTimeData from "../realTimeData";
 import { tokens } from "../../theme";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import TrafficIcon from "@mui/icons-material/Traffic";
 import Header from "../../components/Header";
 import Pie from "./Pie";
@@ -25,12 +25,13 @@ const Dashboard = () => {
   let weeklySpend_2_val = 0;
   let weeklySpend_3 = [];
   let weeklySpend_3_val = 0;
+  let weeklySpend_4 = [];
+  let weeklySpend_4_val = 0;
   let eatout = [];
   let eatout_val = 0;
   let recentTransactions = [];
 
   const [displayValue, setDisplayValue] = useState();
-
 
   RealTimeData().forEach((element) => {
     if (
@@ -45,10 +46,25 @@ const Dashboard = () => {
 
   RealTimeData().forEach((element) => {
     if (
+      (element.transaction_date.isSame(moment().startOf("isoWeek")) |
+        element.transaction_date.isAfter(moment().startOf("isoWeek"))) &
+      (element.transaction_type === "out") &
+      ((element.transaction_category === "Grocery") |
+        (element.transaction_category === "Outside_Eating_or_Order") |
+        (element.transaction_category === "Fun_Stuff") |
+        (element.transaction_category === "Ez") |
+        (element.transaction_category === "Ping"))
+    ) {
+      weeklySpend_4.push(element);
+    }
+  });
+
+  RealTimeData().forEach((element) => {
+    if (
       element.transaction_date.isAfter(new moment().subtract(30, "d")) &
       element.transaction_date.isBefore(new moment()) &
       (element.transaction_type === "out") &
-      (element.transaction_category != "OC_Land_Tax")
+      (element.transaction_category !== "OC_Land_Tax")
     ) {
       weeklySpend_3.push(element);
     }
@@ -85,7 +101,7 @@ const Dashboard = () => {
       eatout.push(element);
     }
   });
-  console.log(weeklySpend_1);
+
   weeklySpend_1.forEach((element) => {
     weeklySpend_1_val += Math.round(+element.transaction_amount);
   });
@@ -97,6 +113,12 @@ const Dashboard = () => {
   weeklySpend_3.forEach((element) => {
     weeklySpend_3_val += Math.round(+element.transaction_amount);
   });
+
+  weeklySpend_4.forEach((element) => {
+    weeklySpend_4_val += Math.round(+element.transaction_amount);
+  });
+  console.log(weeklySpend_4);
+  console.log(weeklySpend_4_val);
 
   eatout.forEach((element) => {
     eatout_val += Math.round(+element.transaction_amount);
@@ -158,6 +180,7 @@ const Dashboard = () => {
             }
           />
         </Box>
+        
         <Box
           gridColumn="span 3"
           backgroundColor={colors.primary[400]}
@@ -185,8 +208,8 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title={"$" + eatout_val}
-            subtitle="Spent on eating out this week"
+            title={"$" + eatout_val + "/ $"+weeklySpend_4_val}
+            subtitle="eating out this week / total since last Monday!"
             progress="0.30"
             increase=""
             icon={
@@ -295,7 +318,9 @@ const Dashboard = () => {
                   {transaction.transaction_item}
                 </Typography>
               </Box>
-              <Box color={colors.grey[100]}>{transaction.transaction_date.format("MM-DD")}</Box>
+              <Box color={colors.grey[100]}>
+                {transaction.transaction_date.format("MM-DD")}
+              </Box>
               <Box
                 backgroundColor={colors.greenAccent[500]}
                 p="5px 10px"
